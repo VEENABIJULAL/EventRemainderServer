@@ -24,17 +24,27 @@ app.post('/register',(req,res)=>{
 
 
 app.post('/login',(req,res)=>{
-    const result=dataservice.login(req,req.body.id,req.body.pswd)
-    console.log(res.status(result.statuscode).json(result));
+    console.log(req.body);
+    dataservice.login(req,req.body.id,req.body.pswd)
+    .then(result=>{
+        res.status(result.statuscode).json(result)
+
+    })
 })
 
 app.post('/save',(req,res)=>{
-    const result=dataservice.save(req,req.body.edate,req.body.edetails)
-    console.log(res.status(result.statuscode).json(result));
+    dataservice.save(req,req.body.userid,req.body.edate,req.body.edetails)
+    .then(result=>{
+        res.status(result.statuscode).json(result)
+
+    })
 })
 app.post('/view',(req,res)=>{
-    const result=dataservice.view(req)
-    console.log(res.status(result.statuscode).json(result));
+    dataservice.view(req,req.body.userid)
+    .then(result=>{
+        res.status(result.statuscode).json(result)
+
+    })
 })
 app.listen(3000,()=>{
     console.log("server created at port 3000");

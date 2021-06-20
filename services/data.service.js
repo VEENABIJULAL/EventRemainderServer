@@ -1,5 +1,5 @@
 const db=require('./dbs');
-let currentid;
+//let currentid;
 let accountdetails={
     1000:{userid:1000,username:"userone",password:"userone",eventdetails:[]},
     1001:{userid:1001,username:"usertwo",password:"usertwo",eventdetails:[]},
@@ -34,61 +34,84 @@ return db.User.findOne({id})
     }
   })
 }
-  const login=(req,id,pswd)=>{
-    let user=accountdetails;
-   if(id in user){
-     if(pswd==user[id]["password"]){
-       req.session.currentid=user[id];
-      // this.savedetails()
-       return{
-        statuscode:200,
-        status:true,
-        message:"login success"
-       }
-     }
-     else{
-       return {
-        statuscode:422,
-        status:false,
-        message:"incorrect password"
-       }
-     }
-   }
-   else{
-     return{
-      statuscode:422,
-      status:false,
-      message:"invalid account"
-     }
-   }
-  }
- const save=(req,edate,edetails)=>{
-  let uid=req.session.currentid;
-    if(uid){
-      uid["eventdetails"].push({edate:edate,edetails:edetails})
-      console.log(uid["eventdetails"]);
-     // this.savedetails();
-      
-     return{
+  const login=(req,userid,password)=>{
+    var id=parseInt(id);
+    return db.User.findOne({userid,password})
+.then(user=>{
+
+  if(user){
+    req.session.currentid=user;
+    return{
       statuscode:200,
       status:true,
-      message:"Event saved successfully"
+      message:"login success"
      }
     }
+    else{
+      return{
+        statuscode:422,
+        status:false,
+        message:"invalid account"
+       }
+    }
+  })
   }
-  const view=(req)=>{
-  
-      let uid=req.session.currentid;
-    if(uid){
+ const save=(req,userid,edate,edetails)=>{
+  return db.User.findOne({userid})
+  .then(user=>{
+    if(!user){
+      return{
+        statuscode:422,
+        status:false,
+        message:"Failed to save"
+       }
+      }
+      else{
+        user.eventdetails.push({edate:edate,edetails:edetails})
+        user.save();
+        return{
+          statuscode:200,
+          status:true,
+          message:"Event saved successfully"
+         }
+
+      }
+    })
+  }
+  //let uid=req.session.currentid;
+  //  if(uid){
+  //    uid["eventdetails"].push({edate:edate,edetails:edetails})
+  //    console.log(uid["eventdetails"]);
+     // this.savedetails();
       
-      console.log(uid["eventdetails"]);
+  //   return{
+  //    statuscode:200,
+  //    status:true,
+  //    message:"Event saved successfully"
+  //   }
+  //  }
+  //}
+  const view=(req,userid)=>{
+    return db.User.findOne({userid})
+    .then(user=>{
+      if(!user){
+        return{
+          statuscode:422,
+          status:false,
+          message:"error...."
+         }
+        }
+        else{
+          console.log(user["eventdetails"]);
       return{
         statuscode:200,
         status:true,
-        message:(uid["eventdetails"]) 
+        message:(user["eventdetails"]) 
        }   
-    }
-  }
+        }
+  
+  })
+}
 
 
 
