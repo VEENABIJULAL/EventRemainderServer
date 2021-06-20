@@ -1,3 +1,4 @@
+const db=require('./dbs');
 let currentid;
 let accountdetails={
     1000:{userid:1000,username:"userone",password:"userone",eventdetails:[]},
@@ -6,29 +7,33 @@ let accountdetails={
     1003:{userid:1003,username:"userfour",password:"userfour",eventdetails:[]}
   }
   const register=(uname,id,pswd)=>{
-    let user=accountdetails;
-    if(id in user){
-      return{
-        statuscode:422,
-        status:false,
-        message:"user exist ..please login"
-      }
-
-    }else{
-      user[id]={
+    console.log(id);
+return db.User.findOne({id})
+.then(user=>{
+  console.log(user);
+  if(user){
+    return{
+      statuscode:422,
+      status:false,
+      message:"user exist ..please login"
+    }
+  }
+  else{
+    const newUser=new db.User({
         userid:id,
         username:uname,
         password:pswd
-      }
+      })
     //  this.savedetails()
+    newUser.save();
       return{
         statuscode:200,
         status:true,
         message:"successfully registered"
       }
-
     }
-  }
+  })
+}
   const login=(req,id,pswd)=>{
     let user=accountdetails;
    if(id in user){

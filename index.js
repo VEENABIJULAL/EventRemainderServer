@@ -15,9 +15,12 @@ app.get('/',(req,res)=>{
     res.send("THIS IS A GET METHOD");
 })
 app.post('/register',(req,res)=>{
-    const result=dataservice.register(req.body.uname,req.body.id,req.body.pswd)
-    console.log(res.status(result.statuscode).json(result));
-})
+    dataservice.register(req.body.uname,req.body.id,req.body.pswd)
+    .then(result=>{
+        res.status(result.statuscode).json(result)
+
+    })
+});
 
 
 app.post('/login',(req,res)=>{
